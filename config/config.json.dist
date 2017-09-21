@@ -1,0 +1,148 @@
+{
+    "adafruit_driver": {
+        "io_host": "io.adafruit.com",
+        "io_key": "<key>",
+        "io_port": 1883,
+        "io_user": "<user>"
+    },
+    "lctech-relay-driver": {
+        "relays": {
+            "lounge-wreath": {
+                "ip": "192.168.16.151"
+            },
+        }
+    }, 
+    "global": {
+        "house_id": "<house prefix>",
+        "mqtt_url": "mqtt://<broker_address>"
+    },
+    "salvos": {
+        "events/salvo/outdoor_christmas_lights": {
+            "on": {
+                "actions": {
+                    "events/switch/outdoor_christmas_lights/set": {
+                        "value": "on"
+                    },
+                    "devices/relay/office-wreath/set": {
+                        "value": "on"
+                    },
+                    "devices/relay/lounge-wreath/set": {
+                        "value": "on"
+                    },
+                    "devices/relay/bedroom-wreath/set": {
+                        "value": "on"
+                    },                    
+                    "notify/slack": {
+                        "value": {
+                            "channel": "#ha-events",
+                            "text": "Christmas lights have been turned on",
+                            "emoji": ":christmas_tree:"
+                        }
+                    }
+                },
+                "revertive": "events/outdoor/christmas_lights"
+            },
+            "off": {
+                "actions": {
+                    "events/switch/outdoor_christmas_lights/set": {
+                        "value": "off"
+                    },
+                    "devices/relay/office-wreath/set": {
+                        "value": "off"
+                    },
+                    "devices/relay/lounge-wreath/set": {
+                        "value": "off"
+                    },
+                    "devices/relay/bedroom-wreath/set": {
+                        "value": "off"
+                    },                    
+                    "notify/slack": {
+                        "value": {
+                            "channel": "#ha-events",
+                            "text": "Christmas lights have been turned off",
+                            "emoji": ":christmas_tree:"
+                        }
+                    }
+                }, 
+                "revertive": "events/outdoor/christmas_lights"
+            }
+        }
+    },
+    "sensors": {
+        "0x1F04": {
+            "name": "outdoor_rear"
+        },
+        "0x4D02": {
+            "name": "indoor_lounge"
+        },
+        "0x8B04": {
+            "name": "indoor_bedroom"
+        },
+        "0x8604": {
+            "name": "indoor_kitchen"
+        },
+        "0xFB01": {
+            "name": "indoor_conservatory"
+        },
+        "0x3801": {
+            "name": "indoor_bathroom"
+        },
+        "0x0801": {
+            "name": "indoor_attic"
+        },
+        "0x0A02": {
+            "name": "indoor_nursery"
+        },
+        "0x8102": {
+            "name": "power_meter"
+        }
+    },
+    "switches": {
+        "0x0045F01E-1": {
+            "name": "lounge_sideboard_lamp",
+            "type": "lighting2",
+            "group": 1,
+            "dimming": true
+        },
+        "0x0045F01E-2": {
+            "name": "lounge_table_lamp",
+            "type": "lighting2",
+            "group": 1,
+            "dimming": true
+        },
+        "0x0045F01E-3": {
+            "name": "lounge_uplighter",
+            "type": "lighting2",
+            "group": 1,
+            "dimming": true
+        },
+        "0x0001C690-10": {
+            "name": "front_door",
+            "type": "lighting2"
+        },
+        "0x0001815C-3": {
+            "name": "office_uplighter",
+            "type": "lighting2"
+        },
+        "0x4E06-6": {
+            "name": "office_uplighter",
+            "type": "lighting2"
+        },
+        "0x0001815C-2": {
+            "name": "office_ceiling_light",
+            "type": "lighting2"
+        },
+        "0x00469362-10": {
+            "name": "external_daylight",
+            "type": "lighting2"
+        },
+        "0x410F-15": {
+            "name": "outdoor_christmas_lights",
+            "type": "lighting1"
+        },
+        "0x4110-16": {
+            "name": "indoor_christmas_lights",
+            "type": "lighting1"
+        }
+    }
+}

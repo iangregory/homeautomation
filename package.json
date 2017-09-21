@@ -1,0 +1,19 @@
+{
+  "name": "ha",
+  "description": "Simple MQTT based home automation",
+  "version": "0.1.0",
+  "dependencies": {
+    "cache-require-paths": "^0.1.2",
+    "cron": "latest",
+    "mqtt": "latest",
+    "mysql": "latest",
+    "winston": "^2.1.1",
+    "yargs": "^3.30.0",
+    "rfxcom": "latest",
+    "is-there": "latest",
+    "merge": "latest"
+  },
+  "scripts": {
+    "start": "start"
+  }
+}

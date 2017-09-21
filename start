@@ -1,0 +1,40 @@
+#!/usr/local/bin/bash
+################################################################################
+# ha/start - Ian Gregory <ian@ians-net.co.uk>
+#-------------------------------------------------------------------------------
+# Starts a list of programs in tmux sessions
+################################################################################
+
+SCRIPT_PATH=$(dirname "$0")
+NICE=/usr/bin/nice
+SUDO=/usr/bin/doas	# Use doas from OpenBSD 5.8
+TMUX=/usr/bin/tmux
+
+if [ "$HOSTNAME" = "zero.arnet.intra" ]; then
+	declare -A APPS=( [rfxcom]="$SCRIPT_PATH/bin/start.js rfxcom --port=/dev/ttyU1 --protocols=AC,ARC,OREGON --driver_id=rfxcom-main" [rfxcom2]="$SCRIPT_PATH/bin/start.js rfxcom --port=/dev/ttyU0 --protocols=BYRONSX --driver_id=rfxcom-byron")
+fi
+
+if [ "$HOSTNAME" = "holly.teliko.co.uk" ]; then
+	        declare -A APPS=( [homeeasy]="$NICE bin/start.js homeeasy" [oregon]="$NICE bin/start.js oregon" [rest-api]="$NICE bin/start.js api" [persist-mysql]="$NICE bin/start.js persist-mysql")
+fi
+
+SESSION=ha
+
+# if the session is already running, just attach to it.
+tmux has-session -t $SESSION
+if [ $? -eq 0 ]; then
+    echo "Session \"$SESSION\" already exists. Attaching."
+    sleep 1
+    tmux attach -t $SESSION
+    exit 0;
+fi
+
+# create a new session, named $SESSION, and detach from it
+echo "Creating tmux session \"$SESSION\"..."
+$TMUX new-session -d -s $SESSION
+
+for i in "${!APPS[@]}"
+do
+	echo "Starting \"$i\" with command \"${APPS[$i]}\"..."
+	$TMUX new-window -t $SESSION -a -n "$i" "/bin/sh -c '${APPS[$i]}; exec bash'"
+done
