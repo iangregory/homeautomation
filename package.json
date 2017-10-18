@@ -9,9 +9,10 @@
     "mysql": "latest",
     "winston": "^2.1.1",
     "yargs": "^3.30.0",
-    "rfxcom": "latest",
+    "rfxcom": "1.0.0",
     "is-there": "latest",
-    "merge": "latest"
+    "merge": "latest",
+    "use-strict": "latest"
   },
   "scripts": {
     "start": "start"
