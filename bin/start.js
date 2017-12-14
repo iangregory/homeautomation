@@ -9,100 +9,101 @@
  * @license ISC
  * 
  */
-'use strict';
+'use strict'
 
 /* Modules */
-var h = require('../lib/ha'),
-    util = require('util'),
-    path = require('path'),
-    is_there = require('is-there'),
-    merge = require('merge');
+var h = require('../lib/ha')
+var util = require('util')
+var path = require('path')
+var isThere = require('is-there')
+var merge = require('merge')
 
 /* Variables */
-var log_level = 'info';
-var lib_dir = path.resolve(path.dirname(require.main.filename) + '/../lib/');
-var driver_name, driver, driver_id;
+var logLevel = 'info'
+var libDir = path.resolve(path.dirname(require.main.filename) + '/../lib/')
+var driverName, driver, driverId
 
 /* Load configuration */
-var config = require('../config/config.json');
+var config = require('../config/config.json')
 
 /* Read command line arguments */
 var args = require('yargs')
-    .usage('Usage: $0 <DRIVER_NAME>')
-    .demand(1)
-    .example('$0 bar --driverid=foo1', 'Load driver "bar" with driver_id "foo1"')
-    .example('$0 bar --debug', 'Load driver "bar" in debug mode')
-    .alias('d', 'debug')
-    .boolean('d')
-    .check(function (argv) {
+  .usage('Usage: $0 <DRIVER_NAME>')
+  .demand(1)
+  .example('$0 bar --driverid=foo1', 'Load driver "bar" with driverId "foo1"')
+  .example('$0 bar --debug', 'Load driver "bar" in debug mode')
+  .alias('d', 'debug')
+  .boolean('d')
+  .check(function (argv) {
     /* Validate requested driver library exists and provides the expected functionbs */
-    driver_name = argv._[0];
-    
-    if (!is_there(lib_dir + '/' + driver_name + '.js')) {
-        throw new Error(util.format("Error: %s.js does not exist as a driver library in %s", driver_name, lib_dir));
+    driverName = argv._[0]
+
+    if (!isThere(libDir + '/' + driverName + '.js')) {
+      throw new Error(util.format('Error: %s.js does not exist as a driver library in %s', driverName, libDir))
     }
-    
+
     /* Load the driver library */
-    driver = require(lib_dir + '/' + driver_name + '.js');
-    
+    driver = require(libDir + '/' + driverName + '.js')
+
     /* Check that the driver defines an init() function */
-    if (typeof driver.init != 'function') {
-        throw new Error(util.format("Error: %s.js does not define an init() function (function %s)", driver_name, typeof driver.init));
+    if (typeof driver.init !== 'function') {
+      throw new Error(util.format('Error: %s.js does not define an init() function (function %s)', driverName, typeof driver.init))
     }
-    
-    return true;
-});
+
+    return true
+  })
 
 // Set debug if requested
 if (args.argv.d) {
-  log_level = 'debug';
+  logLevel = 'debug'
 }
 
 // Check the driver ID has been provided, or generate one using the name of the application
-if (args.argv.driver_id !== undefined) {
-    driver_id = config.global.house_id + "-" + args.argv.driver_id;
+if (args.argv.driverId !== undefined) {
+  driverId = config.global.house_id + '-' + args.argv.driverId
 } else {
-    driver_id = config.global.house_id + "-" + args.argv._[0];
+  driverId = config.global.house_id + '-' + args.argv._[0]
 }
 
 /* Set up the home automation library */
 var ha = new h({
-    log_level: log_level,
-    mqtt_url: config.global.mqtt_url,
-    driver_id: driver_id, 
-    topic_prefix: config.global.house_id
-});
+  log_level: logLevel,
+  mqtt_url: config.global.mqtt_url,
+  driver_id: driverId,
+  topic_prefix: config.global.house_id
+})
 
-ha.connect();
+ha.connect()
 
-driver.init(ha, merge(args, config));
+driver.init(ha, merge(args, config))
 
 /* Handle ctrl-c */
 process.on('SIGINT', function () {
-    ha.warn('Interrupted - cleaning up and closing down');
-    
-    if (typeof driver.sigint === 'function') {
-        ha.debug('Calling driver-specific handler');
-        driver.sigint(function (err) {
-            ha.close();
-            process.exit();
-        });
-    } else {
-        ha.close();
-        process.exit();
-    }
-});
+  ha.warn('Interrupted - cleaning up and closing down')
+
+  if (typeof driver.sigint === 'function') {
+    ha.debug('Calling driver-specific handler')
+    driver.sigint(function () {
+      ha.close()
+      process.exit()
+    })
+  } else {
+    ha.close()
+    process.exit()
+  }
+})
 
 /* Handle break */
 process.on('SIGHUP', function () {
-    if (driver.sighup == 'function') driver.sighup();
-});
+  ha.warn('SIGHUP recieved')
+  if (typeof driver.sighup === 'function') {
+    driver.sighup()
+  }
+})
 
 /* Connect to the message bus */
 ha.once('connect', function () {
-    ha.debug('Connected to the message bus...');
-    
-    driver.run();
-});
+  ha.debug('Connected to the message bus...')
 
-
+  driver.run()
+})
