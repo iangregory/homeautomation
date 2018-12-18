@@ -3,16 +3,20 @@
   "description": "Simple MQTT based home automation",
   "version": "0.1.0",
   "dependencies": {
-    "cache-require-paths": "^0.1.2",
-    "cron": "latest",
-    "mqtt": "latest",
-    "mysql": "latest",
-    "winston": "^2.1.1",
-    "yargs": "^3.30.0",
-    "rfxcom": "1.0.0",
+    "cron": "^1.6.0",
+    "decimal.js-light": "^2.5.0",
+    "eventsource": "^1.0.7",
     "is-there": "latest",
-    "merge": "latest",
-    "use-strict": "latest"
+    "merge": "^1.2.1",
+    "mqtt": "^2.18.8",
+    "mysql": "^2.16.0",
+    "object-diff": "latest",
+    "rfxcom": "^1.4.1",
+    "slack-node": "latest",
+    "use-strict": "latest",
+    "winston": "^2.4.4",
+    "ya-watchdog": "latest",
+    "yargs": "^3.30.0"
   },
   "scripts": {
     "start": "start"
